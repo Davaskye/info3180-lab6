@@ -1,14 +1,63 @@
 <template>
     <ul class="news__list">
-        <li class="news__item">News item 1</li>
-        <li class="news__item">News item 2</li>
-        <li class="news__item">News item 3</li>
+        <li v-for="article in articles" class="news__item">
+        <img class = "images" :src = "article.urlToImage" :alt="article.title">
+        <h5>{{article.title}}</h5>
+        <p>{{article.description}}</p>
+        </li>
     </ul>
 </template>
+
 <script>
 export default {
     data() {
-        return {};
+        return {
+            articles: []
+        };
     },
+
+    created() {
+        let self = this;
+        fetch(`https://newsapi.org/v2/top-headlines?country=us`,
+    {
+        headers: {
+            'Authorization': `Bearer ${import.meta.env.VITE_NEWSAPI_TOKEN}`
+        }
+    }).then(function(response) {
+            return response.json();
+        }).then(function(data) {
+            console.log(data);
+            self.articles = data.articles;
+        });
+    }
 };
 </script>
+
+<style>
+.news__list{
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    list-style-type: none;
+}
+
+.news__item{
+    border: 1px solid #cccccc;
+    border-bottom: 6px solid #10877b;
+    border-radius: 6px;
+    width:300px;
+    box-shadow: rgba(148, 148, 148, 0.8) 0px 0 10px;
+}
+
+.images{
+    width: 300px;
+    height: 200px;
+    object-fit: cover;
+}
+
+h5{
+    padding-top: 10px;
+    font-weight: bold;
+}
+
+</style>
